@@ -1,10 +1,11 @@
 const Discord = require('discord.js');
+const config = require('./config.json');
 
 const client = new Discord.Client({ intents: [
     Discord.Intents.FLAGS.GUILD_MESSAGES,
 Discord.Intents.FLAGS.GUILDS]});
 
-const prefix = '-';
+const prefix = config.prefix;
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`)
@@ -30,4 +31,4 @@ client.on('messageCreate', (message) => {
 
 
 
-client.login('ODg4Mjc0NzgxOTQwNjIxMzIy.YUQUWw.U9Eg4VCXo6yBU7520wsM9vZjO48');
+client.login(config.token);
