@@ -1,9 +1,19 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
+const fs = require('fs');
 
 const client = new Discord.Client({ intents: [
     Discord.Intents.FLAGS.GUILD_MESSAGES,
 Discord.Intents.FLAGS.GUILDS]});
+
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
+
+for(let file of commandFiles){
+    const command = require(`./commands/${file}`);
+
+    client.commands.set(command.name, command);
+}
 
 const prefix = config.prefix;
 
@@ -17,15 +27,9 @@ client.on('messageCreate', (message) => {
     
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
-    let input = " ";
-    if(args.length > 0)
-        input = args.shift().toLowerCase();
 
     if(command === 'ping'){
-        message.channel.send('pong!');
-        if(input === 'pong'){
-            message.channel.send('wat?');
-        }
+        client.commands.get('ping').execute(message, args);
     }
 });
 
