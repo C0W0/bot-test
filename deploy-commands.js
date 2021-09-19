@@ -3,14 +3,17 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require("discord-api-types/v9");
 const { Client } = require('discord.js');
 const config = require('./config.json');
-
-const commands = [
-    new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
-    new SlashCommandBuilder().setName('server').setDescription('Replies with server info'),
-    new SlashCommandBuilder().setName('user').setDescription('Replies with user info')
-].map(command => command.toJSON());
-
+const fs = require('fs');
 const rest = new REST({ version: '9'}).setToken(config.token);
+
+const commands = [];
+const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
+
+for(let file of commandFiles){
+    const command = require(`./commands/${file}`);
+    commands.push(new SlashCommandBuilder().setName(command.name).setDescription(command.description).toJSON());
+}
+
 
 (async () => {
     try {

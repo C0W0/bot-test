@@ -17,6 +17,8 @@ for(let file of commandFiles){
 
 const prefix = config.prefix;
 
+
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}`)
 });
@@ -26,28 +28,34 @@ client.on('messageCreate', (message) => {
         return;
     
     const args = message.content.slice(prefix.length).split(/ +/);
-    const command = args.shift().toLowerCase();
+    const commandName = args.shift().toLowerCase();
+    const command = client.commands.get(commandName);
 
-    if(command === 'ping'){
-        client.commands.get('ping').execute(message, args);
-    }
+    if(!command)
+        return;
+
+    command.executeT(message, args);
 });
 
 client.on('interactionCreate', async interaction => {
     if(!interaction.isCommand()) 
         return;
 
-    const { commandName } = interaction;
+    const command = client.commands.get(interaction.commandName);
 
-    if(commandName === 'ping'){
-        await interaction.reply('pong!');
-    } else if(commandName === 'server'){
-        await interaction.reply(`Server name: ${interaction.guild.name}\nTotal Members: ${interaction.guild.memberCount}`);
-    } else if(commandName === 'user'){
-        await interaction.reply(`Your tag: ${interaction.user.tag}\nYour id: ${interaction.user.id}`);
+    if(!command)
+        return;
+    
+    try{
+        await command.executeS(interaction);
+    }catch(error){
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this command', ephemeral: true});
     }
     
 
 });
+
+
 
 client.login(config.token);
