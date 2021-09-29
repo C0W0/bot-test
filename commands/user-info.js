@@ -3,11 +3,12 @@ const { MessageEmbed, Message } = require("discord.js");
 module.exports = {
     name: 'user',
     description: "Replies with user info",
+    slashCmd: true,
     executeT(message, args){
         const user = message.mentions.users.first() || message.member.user;
         const member = message.guild.members.cache.get(user.id);
         const embed1 = new MessageEmbed()
-            .setAuthor(`user`, user.avatarURL()) //User info for ${user.username}
+            .setAuthor(`User info for ${user.username}`, user.avatarURL()) 
             .addFields({
                 name: 'User tag',
                 value: user.tag,
@@ -38,7 +39,7 @@ module.exports = {
         const user = interaction.user;
         const member = interaction.guild.members.cache.get(user.id);
         const embed1 = new MessageEmbed()
-            .setAuthor(`user`, user.avatarURL()) //User info for ${user.username}
+            .setAuthor(`User info for ${user.username}`, user.avatarURL()) 
             .addFields({
                 name: 'User tag',
                 value: user.tag,

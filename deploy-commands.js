@@ -11,6 +11,9 @@ const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith(
 
 for(let file of commandFiles){
     const command = require(`./commands/${file}`);
+    if(!command.slashCmd){
+        continue;
+    }
     commands.push(new SlashCommandBuilder().setName(command.name).setDescription(command.description).toJSON());
 }
 
