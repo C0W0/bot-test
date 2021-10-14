@@ -3,7 +3,7 @@ const { prefix } = require("../config.json");
 module.exports = {
     name: 'messageCreate',
     once: false,
-    execute(message){
+    execute(keyv, message){
         // const prefix = config.prefix;
         if(!message.content.startsWith(prefix) || message.author.bot)
             return;
@@ -15,6 +15,6 @@ module.exports = {
         if(!command)
             return;
     
-        command.executeT(message, args);
+        command.executeT(keyv, message, args);
     }
 }

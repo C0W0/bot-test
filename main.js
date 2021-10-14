@@ -1,6 +1,9 @@
 const Discord = require('discord.js');
 const config = require('./config.json');
 const fs = require('fs');
+const Keyv = require('keyv');
+
+const keyvMap = new Keyv();
 
 const client = new Discord.Client({ intents: [
     Discord.Intents.FLAGS.GUILD_MESSAGES,
@@ -15,56 +18,21 @@ for(let file of commandFiles){
     client.commands.set(command.name, command);
 }
 
+keyvMap.set('admin role', '<>');
+keyvMap.set('remind role', '<>');
+
 for(let file of eventFiles){
     const event = require(`./events/${file}`);
     if(event.once){
-        client.once(event.name, (...args) => event.execute(...args));
+        client.once(event.name, (...args) => event.execute(keyvMap, ...args));
     }else{
-        client.on(event.name, (...args) => event.execute(...args));
+        client.on(event.name, (...args) => event.execute(keyvMap, ...args));
     }
 }
 
+keyvMap.on('error', err => console.error('keyv connection error: '+err));
+
 const prefix = config.prefix;
-
-
-
-// client.on('ready', () => {
-//     console.log(`Logged in as ${client.user.tag}`)
-// });
-
-// client.on('messageCreate', (message) => {
-//     if(!message.content.startsWith(prefix) || message.author.bot)
-//         return;
-    
-//     const args = message.content.slice(prefix.length).split(/ +/);
-//     const commandName = args.shift().toLowerCase();
-//     const command = client.commands.get(commandName);
-
-//     if(!command)
-//         return;
-
-//     command.executeT(message, args);
-// });
-
-// client.on('interactionCreate', async interaction => {
-//     if(!interaction.isCommand()) 
-//         return;
-
-//     const commandName = interaction.commandName;
-//     const command = client.commands.get(commandName);
-
-//     if(!command)
-//         return;
-    
-//     try{
-//         await command.executeS(interaction);
-//     }catch(error){
-//         console.error(error);
-//         await interaction.reply({ content: 'There was an error while executing this command', ephemeral: true});
-//     }
-    
-
-// });
 
 
 

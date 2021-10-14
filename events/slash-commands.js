@@ -1,7 +1,7 @@
 module.exports = {
     name: 'interactionCreate',
     once: false,
-    async execute(interaction){
+    async execute(keyv, interaction){
         if(!interaction.isCommand()) 
         return;
 
@@ -11,7 +11,7 @@ module.exports = {
             return;
         
         try{
-            await command.executeS(interaction);
+            await command.executeS(keyv, interaction);
         }catch(error){
             console.error(error);
             await interaction.reply({ content: 'There was an error while executing this command', ephemeral: true});

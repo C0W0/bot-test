@@ -4,7 +4,7 @@ module.exports = {
     name: 'user',
     description: "Replies with user info",
     slashCmd: true,
-    executeT(message, args){
+    executeT(keyv, message, args){
         const user = message.mentions.users.first() || message.member.user;
         const member = message.guild.members.cache.get(user.id);
         const embed1 = new MessageEmbed()
@@ -35,7 +35,7 @@ module.exports = {
             });
         message.channel.send({embeds: [embed1]});
     },
-    async executeS(interaction){
+    async executeS(keyv, interaction){
         const user = interaction.user;
         const member = interaction.guild.members.cache.get(user.id);
         const embed1 = new MessageEmbed()
