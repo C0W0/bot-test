@@ -8,53 +8,63 @@ Discord.Intents.FLAGS.GUILDS]});
 
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
 
 for(let file of commandFiles){
     const command = require(`./commands/${file}`);
-
     client.commands.set(command.name, command);
+}
+
+for(let file of eventFiles){
+    const event = require(`./events/${file}`);
+    if(event.once){
+        client.once(event.name, (...args) => event.execute(...args));
+    }else{
+        client.on(event.name, (...args) => event.execute(...args));
+    }
 }
 
 const prefix = config.prefix;
 
 
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}`)
-});
+// client.on('ready', () => {
+//     console.log(`Logged in as ${client.user.tag}`)
+// });
 
-client.on('messageCreate', (message) => {
-    if(!message.content.startsWith(prefix) || message.author.bot)
-        return;
+// client.on('messageCreate', (message) => {
+//     if(!message.content.startsWith(prefix) || message.author.bot)
+//         return;
     
-    const args = message.content.slice(prefix.length).split(/ +/);
-    const commandName = args.shift().toLowerCase();
-    const command = client.commands.get(commandName);
+//     const args = message.content.slice(prefix.length).split(/ +/);
+//     const commandName = args.shift().toLowerCase();
+//     const command = client.commands.get(commandName);
 
-    if(!command)
-        return;
+//     if(!command)
+//         return;
 
-    command.executeT(message, args);
-});
+//     command.executeT(message, args);
+// });
 
-client.on('interactionCreate', async interaction => {
-    if(!interaction.isCommand()) 
-        return;
+// client.on('interactionCreate', async interaction => {
+//     if(!interaction.isCommand()) 
+//         return;
 
-    const command = client.commands.get(interaction.commandName);
+//     const commandName = interaction.commandName;
+//     const command = client.commands.get(commandName);
 
-    if(!command)
-        return;
+//     if(!command)
+//         return;
     
-    try{
-        await command.executeS(interaction);
-    }catch(error){
-        console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command', ephemeral: true});
-    }
+//     try{
+//         await command.executeS(interaction);
+//     }catch(error){
+//         console.error(error);
+//         await interaction.reply({ content: 'There was an error while executing this command', ephemeral: true});
+//     }
     
 
-});
+// });
 
 
 
